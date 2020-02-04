@@ -1,0 +1,725 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# McKinney Chapter 5\n",
+    "February 6, 2020"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Overview\n",
+    "1. Understand what pandas is\n",
+    "2. Series\n",
+    "3. DataFrame\n",
+    "4. Index objects\n",
+    "5. Reindexing"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 1. What is pandas?\n",
+    "Pandas is a library that makes data manipulation and analysis “fast and easy” in Python (or at least so says creator of pandas and author of our book, Wes Mckinney). It stands for \"Python data analysis.\""
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Let's start out by importing the library."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from pandas import Series, DataFrame\n",
+    "import pandas as pd"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 2. Series\n",
+    "A Series is a one-dimensional object containing an array of data and an associated array of data labels, called its index. It can hold any type such as integers, floats, and strings.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0    4\n",
+       "1    7\n",
+       "2   -5\n",
+       "3    3\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#Create a Series\n",
+    "obj = Series([4, 7, -5, 3])\n",
+    "    \n",
+    "#The index is on the left and values on the right\n",
+    "obj"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "c    3\n",
+       "a   -5\n",
+       "d    4\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#Now let's create a Series identifying an index for each data point. \n",
+    "obj2 = Series([4, 7, -5, 3], index=['d', 'b', 'a', 'c'])\n",
+    "obj2\n",
+    "\n",
+    "#Use an index values to call a number in the Series\n",
+    "obj2['b']\n",
+    "obj2[['c', 'a', 'd']]\n",
+    "  "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Apply mathematical functions"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "d    4\n",
+       "b    7\n",
+       "c    3\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 8,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "obj2[obj2 > 0]\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "d     8\n",
+       "b    14\n",
+       "a   -10\n",
+       "c     6\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "obj2 * 2"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "True"
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "'a' in obj2\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "False"
+      ]
+     },
+     "execution_count": 12,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "'m' in obj2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Create a series from a dict"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "state\n",
+       "Ohio      35000\n",
+       "Texas     71000\n",
+       "Oregon    16000\n",
+       "Utah       5000\n",
+       "Name: population, dtype: int64"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "dict = {'Ohio': 35000, 'Texas': 71000, 'Oregon': 16000, 'Utah': 5000}\n",
+    "obj3 = Series(dict)\n",
+    "obj3\n",
+    "\n",
+    "#name the index and values\n",
+    "obj3.name = 'population'\n",
+    "obj3.index.name = 'state'\n",
+    "obj3"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 3. DataFrame"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "A DataFrame is a two dimensional object that can have columns with potential different value types. It has a row and column index and stores data in a two-dimension format. It's the most commonly used object in pandas. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Create a DataFrame with the state population info from above."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>state</th>\n",
+       "      <th>year</th>\n",
+       "      <th>pop</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <td>0</td>\n",
+       "      <td>Ohio</td>\n",
+       "      <td>2000</td>\n",
+       "      <td>1.5</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>1</td>\n",
+       "      <td>Ohio</td>\n",
+       "      <td>2001</td>\n",
+       "      <td>1.7</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>2</td>\n",
+       "      <td>Ohio</td>\n",
+       "      <td>2002</td>\n",
+       "      <td>3.6</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>3</td>\n",
+       "      <td>Nevada</td>\n",
+       "      <td>2001</td>\n",
+       "      <td>2.4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>4</td>\n",
+       "      <td>Nevada</td>\n",
+       "      <td>2002</td>\n",
+       "      <td>2.9</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "    state  year  pop\n",
+       "0    Ohio  2000  1.5\n",
+       "1    Ohio  2001  1.7\n",
+       "2    Ohio  2002  3.6\n",
+       "3  Nevada  2001  2.4\n",
+       "4  Nevada  2002  2.9"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data = {'state': ['Ohio', 'Ohio', 'Ohio', 'Nevada', 'Nevada'],\n",
+    "'year': [2000, 2001, 2002, 2001, 2002],\n",
+    "'pop': [1.5, 1.7, 3.6, 2.4, 2.9]}\n",
+    "frame = DataFrame(data)\n",
+    "frame"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Nevada</th>\n",
+       "      <th>Ohio</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <td>2001</td>\n",
+       "      <td>2.4</td>\n",
+       "      <td>1.7</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>2002</td>\n",
+       "      <td>2.9</td>\n",
+       "      <td>3.6</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>2000</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>1.5</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "      Nevada  Ohio\n",
+       "2001     2.4   1.7\n",
+       "2002     2.9   3.6\n",
+       "2000     NaN   1.5"
+      ]
+     },
+     "execution_count": 11,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#You can do the same thing with a nested dict of dicts format. Notice that it returns \"NaN\" where you are missing data.\n",
+    "pop = {'Nevada': {2001: 2.4, 2002: 2.9},\n",
+    "       'Ohio': {2000: 1.5, 2001: 1.7, 2002: 3.6}}\n",
+    "frame2 = DataFrame(pop)\n",
+    "frame2"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>0</th>\n",
+       "      <th>1</th>\n",
+       "      <th>2</th>\n",
+       "      <th>3</th>\n",
+       "      <th>4</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <td>state</td>\n",
+       "      <td>Ohio</td>\n",
+       "      <td>Ohio</td>\n",
+       "      <td>Ohio</td>\n",
+       "      <td>Nevada</td>\n",
+       "      <td>Nevada</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>year</td>\n",
+       "      <td>2000</td>\n",
+       "      <td>2001</td>\n",
+       "      <td>2002</td>\n",
+       "      <td>2001</td>\n",
+       "      <td>2002</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td>pop</td>\n",
+       "      <td>1.5</td>\n",
+       "      <td>1.7</td>\n",
+       "      <td>3.6</td>\n",
+       "      <td>2.4</td>\n",
+       "      <td>2.9</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "          0     1     2       3       4\n",
+       "state  Ohio  Ohio  Ohio  Nevada  Nevada\n",
+       "year   2000  2001  2002    2001    2002\n",
+       "pop     1.5   1.7   3.6     2.4     2.9"
+      ]
+     },
+     "execution_count": 12,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#Change the orientation of the DataFrame (transpose it)\n",
+    "frame.T"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 4. Index Objects"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Index objects hold the axis information. If you construct an array with labels to make a Series or DataFrame, it's converted to an Index. They are immutable objects."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "NameError",
+     "evalue": "name 'Index' is not defined",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[0;31mNameError\u001b[0m                                 Traceback (most recent call last)",
+      "\u001b[0;32m<ipython-input-18-0973aff6da67>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m\u001b[0m\n\u001b[1;32m      2\u001b[0m \u001b[0mindex\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mobj\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mindex\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m      3\u001b[0m \u001b[0mindex\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m----> 4\u001b[0;31m \u001b[0mIndex\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0ma\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mb\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mc\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mdtype\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mobject\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m      5\u001b[0m \u001b[0mindex\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;36m1\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m      6\u001b[0m \u001b[0mIndex\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0mb\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mc\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mdtype\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mobject\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;31mNameError\u001b[0m: name 'Index' is not defined"
+     ]
+    }
+   ],
+   "source": [
+    "obj4 = Series(range(3), index=['a', 'b', 'c'])\n",
+    "index = obj.index\n",
+    "index\n",
+    "Index([a, b, c], dtype=object)\n",
+    "index[1:]\n",
+    "Index([b, c], dtype=object)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Each Index has a number of methods and properties for set logic:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "True"
+      ]
+     },
+     "execution_count": 16,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "'Ohio' in frame2.columns"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "False"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "2003 in frame2.index"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 5. Reindexing"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Reindexing is a pandas method that creates a new object with the data conformed to a new index."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "a   -5.3\n",
+       "b    7.2\n",
+       "c    3.6\n",
+       "d    4.5\n",
+       "e    NaN\n",
+       "dtype: float64"
+      ]
+     },
+     "execution_count": 21,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#Create a Series and we will reindex it\n",
+    "obj5 = Series([4.5, 7.2, -5.3, 3.6], index=['d', 'b', 'a', 'c'])\n",
+    "obj5\n",
+    "\n",
+    "obj6 = obj5.reindex(['a', 'b', 'c', 'd', 'e'])\n",
+    "obj6\n",
+    "#Observe that again \"NaN\" was assigned where there were missing data"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Use \"ffill\" option to fill in missing values"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0      blue\n",
+       "2    purple\n",
+       "4    yellow\n",
+       "dtype: object"
+      ]
+     },
+     "execution_count": 22,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#We start with a Series of colors\n",
+    "obj7 = Series(['blue', 'purple', 'yellow'], index=[0, 2, 4])\n",
+    "obj7"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0      blue\n",
+       "1      blue\n",
+       "2    purple\n",
+       "3    purple\n",
+       "4    yellow\n",
+       "5    yellow\n",
+       "dtype: object"
+      ]
+     },
+     "execution_count": 24,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#Now fill the data so that there are two of each color \n",
+    "obj7.reindex(range(6), method='ffill')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.4"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
